@@ -213,14 +213,23 @@ macro_rules! impl_integer_type {
             #[yaserde(flatten)]
             pub base_attr: IntegerBaseAttributes,
             #[yaserde(flatten)]
-            pub int_attr: $int_attr,
+            pub attr: $int_attr,
             #[yaserde(attribute)]
-            pub start: $type,
+            pub start: Vec<$type>,
             #[yaserde(flatten)]
             pub init_var: InitializableVariable,
         }
 
         impl_abstract_variable!($name, Variability::Discrete);
+        impl_arrayable_variable!($name);
+        impl_typed_arrayable_variable!($name);
+        impl_initializable_variable!($name);
+
+        impl $name {
+            pub fn start(&self) -> &[$type] {
+                &self.start
+            }
+        }
     };
 }
 
@@ -466,7 +475,7 @@ fn test_int16() {
     assert_eq!(var.name(), "Int16_input");
     assert_eq!(var.value_reference(), 15);
     assert_eq!(var.causality(), Causality::Input);
-    assert_eq!(var.start, 0);
+    assert_eq!(var.start(), &[0]);
     assert_eq!(var.variability(), Variability::Discrete); // The default for non-float types should be discrete
 }
 
@@ -499,6 +508,30 @@ fn test_float64() {
 }
 
 #[test]
+fn test_dim_int64() {
+    let xml = r#"<Int64
+        name="A"
+        valueReference="4"
+        description="Matrix coefficient A"
+        causality="parameter"
+        variability="tunable"
+        start="1 0 0 0 1 0 0 0 1">
+        <Dimension valueReference="2"/>
+        <Dimension valueReference="2"/>
+        </Int64>"#;
+
+    let var: FmiInt64 = yaserde::de::from_str(xml).unwrap();
+    assert_eq!(var.name(), "A");
+    assert_eq!(var.value_reference(), 4);
+    assert_eq!(var.variability(), Variability::Tunable);
+    assert_eq!(var.causality(), Causality::Parameter);
+    assert_eq!(var.description(), Some("Matrix coefficient A"));
+    assert_eq!(var.start(), vec![1, 0, 0, 0, 1, 0, 0, 0, 1]);
+    assert_eq!(var.dimensions().len(), 2);
+    assert_eq!(var.dimensions()[0].value_reference, Some(2));
+}
+
+#[test]
 fn test_dim_f64() {
     let xml = r#"<Float64
         name="A"
@@ -517,7 +550,10 @@ fn test_dim_f64() {
     assert_eq!(var.variability(), Variability::Tunable);
     assert_eq!(var.causality(), Causality::Parameter);
     assert_eq!(var.description(), Some("Matrix coefficient A"));
-    assert_eq!(var.start, vec![1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]);
+    assert_eq!(
+        var.start(),
+        vec![1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+    );
     assert_eq!(var.dimensions().len(), 2);
     assert_eq!(var.dimensions()[0].value_reference, Some(2));
 }
