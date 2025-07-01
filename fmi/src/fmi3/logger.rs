@@ -16,7 +16,7 @@ pub(crate) unsafe extern "C" fn callback_log(
         .unwrap_or("INVALID");
 
     let (status, level) = match status.0 {
-        binding::fmi3Status_fmi3OK => ("fmi3OK", log::Level::Debug),
+        binding::fmi3Status_fmi3OK => ("fmi3OK", log::Level::Info),
         binding::fmi3Status_fmi3Warning => ("fmi3Warning", log::Level::Warn),
         binding::fmi3Status_fmi3Discard => ("fmi3Discard", log::Level::Warn),
         binding::fmi3Status_fmi3Error => ("fmi3Error", log::Level::Error),

@@ -14,7 +14,7 @@ extern "C" fn callback_log(
         .unwrap_or("NULL");
 
     let level = match status {
-        binding::fmi2Status_fmi2OK => log::Level::Debug,
+        binding::fmi2Status_fmi2OK => log::Level::Info,
         binding::fmi2Status_fmi2Warning => log::Level::Warn,
         binding::fmi2Status_fmi2Pending => unreachable!("Pending status is not allowed in logger"),
         binding::fmi2Status_fmi2Discard => log::Level::Trace,
