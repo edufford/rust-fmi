@@ -1,6 +1,6 @@
 #[derive(Default, PartialEq, Debug, hard_xml::XmlRead, hard_xml::XmlWrite)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[xml(tag = "Annotations", strict(unknown_attribute, unknown_element))]
+#[xml(tag = "Annotations")]
 pub struct Fmi3Annotations {
     #[xml(child = "Annotation")]
     pub annotations: Vec<Annotation>,
@@ -8,10 +8,8 @@ pub struct Fmi3Annotations {
 
 #[derive(Default, PartialEq, Debug, hard_xml::XmlRead, hard_xml::XmlWrite)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[xml(tag = "Annotation", strict(unknown_attribute, unknown_element))]
+#[xml(tag = "Annotation")]
 pub struct Annotation {
     #[xml(attr = "type")]
     pub r#type: String,
-    #[xml(text)]
-    pub content: String,
 }
