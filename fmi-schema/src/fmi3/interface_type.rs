@@ -64,6 +64,9 @@ pub struct Fmi3CoSimulation {
     pub provides_adjoint_derivatives: Option<bool>,
     #[xml(attr = "providesPerElementDependencies")]
     pub provides_per_element_dependencies: Option<bool>,
+    /// If true, the FMU uses its own functions for memory allocation and freeing only.
+    #[xml(attr = "canNotUseMemoryManagementFunctions")]
+    pub can_not_use_memory_management_functions: Option<bool>,
     #[xml(attr = "canHandleVariableCommunicationStepSize")]
     pub can_handle_variable_communication_step_size: Option<bool>,
     #[xml(attr = "fixedInternalStepSize")]
